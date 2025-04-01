@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import Dropdown from './Dropdown'
+import { LuArrowRightLeft } from "react-icons/lu";
 
 const CurrencyCovertor = () => {
 
-    const [amount,setAmount]=useState(0)
+    const [amount,setAmount]=useState(1)
     const [currency,setCurrency]=useState([])
     const [fromCurrency,setfromCurrency]=useState("USD")
     const [ToCurrency,setToCurrency]=useState("INR")
+    const [convertedmount,setConvertedmount]=useState(null)
 
     const fetchcurrency=async()=>{
         try {
@@ -25,11 +27,20 @@ const CurrencyCovertor = () => {
 
     const convertCurrency=async()=>{
         try {
-            const res=await fetch("https://api.frankfurter.app/latest?amount=1&from=USD&to=INR")
+            const res=await fetch(`https://api.frankfurter.app/latest?amount=1&from=${fromCurrency}&to=${ToCurrency}`)
             const data=await res.json()
+            const fromdata=data.rates[ToCurrency]
+            const todata=amount
+            const converted_amt=fromdata*todata
+            setConvertedmount(converted_amt.toFixed(2))
         } catch (error) {
             console.log("Error at fetching data: ",error)
         }
+    }
+
+    const swapCurrency=()=>{
+        setfromCurrency(ToCurrency)
+        setToCurrency(fromCurrency)
     }
 
   return (
@@ -37,15 +48,24 @@ const CurrencyCovertor = () => {
         <h2 className='font-bold text-3xl mb-5'>
             Currency Convertor
         </h2>
-        <div>
-            <Dropdown currency={currency} title="From: "/>
-            {/* swap */}
-            <div>
-                <button>
-                    
+        <div className='flex justify-between items-center '>
+            <Dropdown 
+              currency={fromCurrency}
+              setCurrency={setfromCurrency}
+              currencies={currency} 
+              title="From: "
+            />
+            <div className='pt-6'>
+                <button onClick={swapCurrency} className='w-12 h-12 rounded-full bg-blue-500 text-white flex items-center justify-center cursor-pointer'>
+                <LuArrowRightLeft />
                 </button>
             </div>
-            <Dropdown currency={currency} title="To: "/>
+            <Dropdown 
+               currency={ToCurrency}
+               setCurrency={setToCurrency}
+               currencies={currency} 
+               title="To: "
+            />
         </div>
 
         <div className='mt-4'>
@@ -70,7 +90,7 @@ const CurrencyCovertor = () => {
                   className='bg-indigo-600 px-4 py-2 m-1 text-white font-bold rounded-2xl cursor-pointer hover:bg-indigo-800'>Convert</button>
             </div>
             <div className='flex justify-right items-center mt-2 text-blue-600 font-bold'>
-                Converted Amount: 85 INR
+                Converted Amount: {convertedmount} {ToCurrency}
             </div>
         </div>
     </div>

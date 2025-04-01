@@ -3,7 +3,9 @@ import React from 'react'
 
 const Dropdown=(
     {
+        setCurrency,
         currency,
+        currencies,
         title
     }
 )=>{
@@ -13,8 +15,11 @@ const Dropdown=(
               {title}
             </label>
             <div>
-                <select className='w-full p-2 border border-gray-300 rounded-md shadow-sm block font-bold text-gray-500'>
-                    {currency?.map((currency)=>{
+                <select 
+                  value={currency}
+                  onChange={(e)=>setCurrency(e.target.value)}
+                  className='w-full p-2 px-4  border border-gray-300 rounded-md shadow-sm block font-bold text-gray-500'>
+                    {currencies?.map((currency)=>{
                         return (
                             <option value={currency} key={currency}>
                                 {currency}
